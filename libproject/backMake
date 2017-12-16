@@ -1,0 +1,30 @@
+include scripts/Makefile
+
+modules_make  = $(MAKE) -C $(1);
+modules_clean = $(MAKE) clean -C $(1); 
+
+.PHONY: all mm mc clean
+
+all: $(Target1) $(Target2) $(TESV4L2)
+
+#mm:
+#	@ $(foreach n,$(Modules),$(call modules_make,$(n)))
+#mc:
+#	@ $(foreach n,$(Modules),$(call modules_clean),$(n)))
+
+mkbmp:
+	$(call modules_make,src/libjpegdecode)
+mkjpeg:
+	$(call modules_make,src/libv4l2)
+
+mc : 
+	$(call modules_clean,src/libv4l2)
+	$(call modules_clean,src/libjpegdecode)
+
+$(Target1) : mkbmp
+			cp src/libjpegdecode/$(Target1) ./bin
+$(Target2) : mkjpeg
+		    cp src/libv4l2/$(Target2) ./bin
+
+clean : mc
+	$(RM) bin/*
